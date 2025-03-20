@@ -4,23 +4,26 @@ import sqlite3
 app = Flask(__name__)
 
 def init_db():
-     with sqlite3.connect('database.db') as conn:
-          conn.execute("""CREATE TABLE IF NOT EXISTS livros(
-                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                     titulo TEXT NOT NULL,
-                     categoria TEXT NOT NULL,
-                     autor TEXT NOT NULL,
-                     imagem_url TEXT NOT NULL
-                     )""")
-          print("Banco de dados inicializado com sucesso! ✅")
+    with sqlite3.connect('database.db') as conn:
+       conn.execute("""CREATE TABLE IF NOT EXISTS livros(
+                  id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  titulo TEXT NOT NULL,
+                  categoria TEXT NOT NULL,
+                  autor TEXT NOT NULL,
+                  imagem_url TEXT NOT NULL
+                  )""")
+       print("Banco de dados inicializado com sucesso! ✅")
+          
 init_db()
+
 
 @app.route('/')
 def home_page():
-     return'<h2>Minha página inicial</h2>'
+    return'<h2>Minha página inicial</h2>'
 
 @app.route('/doar', methods=['POST'])
 def doar():
+     
      dados = request.get_json()
      
      titulo = dados.get('titulo')
@@ -35,6 +38,7 @@ def doar():
           conn.execute("""INSERT INTO livros (titulo, categoria, autor, imagem_url)
                      VALUES (?,?,?,?) 
                      """, (titulo, categoria, autor, imagem_url))
+          
           conn.commit()
            
           return jsonify({"mensagem": "Livro cadastrado com sucesso"}), 201
@@ -42,7 +46,7 @@ def doar():
 @app.route('/livros', methods=['GET'])
 def listar_livros():
      with sqlite3.connect('database.db') as conn:
-          livros = conn.execute("SELECT * FROM livros").fetchall()
+         livros = conn.execute("SELECT * FROM livros").fetchall()
           
      livros_formatados =[]
      
@@ -55,6 +59,7 @@ def listar_livros():
               "imagem_url":livro[4]
          }
          livros_formatados.append(dicionario_livros)
+         
      return jsonify(livros_formatados)    
          
          
